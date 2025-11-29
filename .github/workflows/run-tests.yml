@@ -19,18 +19,15 @@ jobs:
       with:
         python-version: '3.9'
 
-    - name: Install dependencies
+    - name: Install system dependencies
       run: |
-        pip install selenium webdriver-manager pytest
+        sudo apt-get update
+        sudo apt-get install -y wget unzip
 
-    - name: Run basic test
+    - name: Install Python dependencies
       run: |
-        python -c "
-        print('✅ Python работает корректно')
-        print('✅ Selenium установлен')
-        print('✅ Тестовая среда настроена')
-        "
-        
-    - name: Run simplified test
+        pip install selenium webdriver-manager
+
+    - name: Run tests
       run: |
         python Autotests.py
