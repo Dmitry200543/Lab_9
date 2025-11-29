@@ -1,0 +1,44 @@
+name: Run Automated Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        pip install selenium pytest webdriver-manager
+
+    - name: Install Chrome browser
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y chromium-browser
+
+    - name: Install ChromeDriver
+      run: |
+        sudo apt-get install -y wget unzip
+        wget https://chromedriver.storage.googleapis.com/$(curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip
+        unzip chromedriver_linux64.zip
+        sudo mv chromedriver /usr/local/bin/
+        sudo chmod +x /usr/local/bin/chromedriver
+
+    - name: Run tests
+      env:
+        MOSPOLYTECH_USERNAME: ${{ secrets.MOSPOLYTECH_USERNAME }}
+        MOSPOLYTECH_PASSWORD: ${{ secrets.MOSPOLYTECH_PASSWORD }}
+      run: |
+        python Autotests.py
