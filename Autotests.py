@@ -1,3 +1,4 @@
+# Лабораторная работа 9 - CI/CD тестирование
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -260,4 +261,5 @@ if __name__ == "__main__":
     print("✅ Реализован интеллектуальный поиск элементов")
     print("✅ Добавлены multiple способы поиска кнопки")
     print("✅ Автотест готов к выполнению входа")
+
     print("="*70)
