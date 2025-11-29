@@ -19,10 +19,6 @@ jobs:
       with:
         python-version: '3.9'
         
-    - name: Install dependencies
-      run: |
-        pip install selenium pytest
-        
     - name: Run CI/CD tests
       run: |
         python Autotests.py
