@@ -21,24 +21,27 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install selenium pytest webdriver-manager
+        pip install selenium webdriver-manager
 
-    - name: Install Chrome browser
+    - name: Install Chrome and ChromeDriver
       run: |
         sudo apt-get update
-        sudo apt-get install -y chromium-browser
-
-    - name: Install ChromeDriver
-      run: |
         sudo apt-get install -y wget unzip
-        wget https://chromedriver.storage.googleapis.com/$(curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip
-        unzip chromedriver_linux64.zip
-        sudo mv chromedriver /usr/local/bin/
+        
+        # Install Chrome
+        wget -q -O /tmp/chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+        sudo apt install -y /tmp/chrome.deb
+        
+        # Install ChromeDriver that matches Chrome version
+        CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+\.\d+')
+        CHROME_MAJOR_VERSION=$(echo $CHROME_VERSION | cut -d. -f1)
+        wget -q -O /tmp/chromedriver_version.txt "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_MAJOR_VERSION"
+        CHROMEDRIVER_VERSION=$(cat /tmp/chromedriver_version.txt)
+        wget -q -O /tmp/chromedriver.zip "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
+        unzip /tmp/chromedriver.zip -d /tmp/
+        sudo mv /tmp/chromedriver /usr/local/bin/
         sudo chmod +x /usr/local/bin/chromedriver
 
     - name: Run tests
-      env:
-        MOSPOLYTECH_USERNAME: ${{ secrets.MOSPOLYTECH_USERNAME }}
-        MOSPOLYTECH_PASSWORD: ${{ secrets.MOSPOLYTECH_PASSWORD }}
       run: |
         python Autotests.py
